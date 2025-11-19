@@ -17,7 +17,7 @@ def save_result(dataset, iid, model, preprocess, lr, eval_result):
 
     PROJECT_ROOT = Path(__file__).parent.parent
     result_file = (
-        PROJECT_ROOT / f"result/{dataset}_{iid}_{model}_{preprocess}_{lr}.jsonl"
+        PROJECT_ROOT / f"result/{dataset}-{iid}-{model}-{preprocess}-{lr}.jsonl"
     )
     result_file.parent.mkdir(exist_ok=True)
 

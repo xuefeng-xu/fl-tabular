@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
         result_file = (
             PROJECT_ROOT
-            / f"result/{args.dataset}_{iid}_{args.model}_{preprocess}_{lr}.jsonl"
+            / f"result/{args.dataset}-{iid}-{args.model}-{preprocess}-{lr}.jsonl"
         )
 
         eval_result = read_json(result_file, lines=True)
@@ -105,8 +105,26 @@ if __name__ == "__main__":
                 accuracy.append(acc)
 
         acc_mean = np.mean(accuracy, axis=0)
-        print(f"preprocess: {preprocess :<10} accuracy: {acc_mean[-1] :.2f}")
+        acc_std = np.std(accuracy, axis=0)
+
+        print(
+            f"preprocess: {preprocess :<10} accuracy: {acc_mean[-1] :.2f} ± {acc_std[-1] :.2f}"
+        )
+
         ax.plot(acc_mean, ls, label=f"{preprocess.title()}")
+        ax.fill_between(
+            range(len(acc_mean)),
+            acc_mean - acc_std,
+            acc_mean + acc_std,
+            alpha=0.3,
+        )
+
+    if args.dataset == "adult":
+        ax.set_ylim(0.6, 0.9)
+    elif args.dataset == "bank":
+        ax.set_ylim(0.8, 0.9)
+    elif args.dataset == "cover":
+        ax.set_ylim(0.4, 0.9)
 
     ax.set_xlabel("Communication Rounds")
     ax.set_ylabel("Accuracy")
@@ -117,7 +135,7 @@ if __name__ == "__main__":
     ax.legend()
 
     fig.tight_layout()
-    img_file = PROJECT_ROOT / f"img/{args.dataset}_{iid}_{args.model}.pdf"
+    img_file = PROJECT_ROOT / f"img/{args.dataset}-{iid}-{args.model}.pdf"
     img_file.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(img_file)
 

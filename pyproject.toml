@@ -13,8 +13,10 @@ dependencies = [
     "flwr-datasets==0.5.0",
     "datasets==3.1.0",
     "torch==2.8.0",
+    "numpy==2.3.4",
     "scikit-learn==1.7.1",
     "pandas==2.3.1",
+    "matplotlib==3.10.7",
 ]
 
 [tool.hatch.build.targets.wheel]

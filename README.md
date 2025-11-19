@@ -24,10 +24,10 @@ pip install -e .
 ## Run Simulation
 
 ```bash
-flwr run . --run-config 'dataset="adult" iid=true model="lr" preprocess="federated"'
+flwr run . --run-config 'dataset="adult" iid=true model="mlp" preprocess="federated" lr=0.001'
 ```
 
-Results are saved under `./result/*.jsonl`
+Results are saved in `./result/{dataset}-{iid}-{model}-{preprocess}-{lr}.jsonl`
 
 | Parameter | Description | Values |
 |---|---|---|
@@ -39,20 +39,20 @@ Results are saved under `./result/*.jsonl`
 
 ## Reproduction
 
-To reproduce results for the `"adult"` dataset + IID setting + `"lr"` model:
+To reproduce results for the `adult` dataset + IID setting + `lr` model:
 
 ```bash
 python reproduce.py --dataset adult --iid true --model lr
 ```
 
-Similarly, to reproduce results for the `"bank"` dataset + Non-IID setting + `"mlp"` model:
+Similarly, to reproduce results for the `bank` dataset + Non-IID setting + `mlp` model:
 
 ```bash
 python reproduce.py --dataset bank --iid false --model mlp
 ```
 
-Plots are saved under `./img/*.pdf`
+Plots are saved in `./img/{dataset}-{iid}-{model}.pdf`
 
 ## Acknowledgements
 
-This code is adapted from [Flower with a Tabular Dataset Example](https://github.com/adap/flower/tree/main/examples/fl-tabular)
+This code is adapted from [Flower with a Tabular Dataset Example](https://github.com/adap/flower/tree/v1.23.0/examples/fl-tabular)

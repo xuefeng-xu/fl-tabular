@@ -6,18 +6,17 @@ from flwr.app import ArrayRecord, Context
 from flwr.serverapp import Grid, ServerApp
 from flwr.serverapp.strategy import FedAvg
 
-from fltabular.task import get_model, get_device
+from fltabular.task import get_model
 
 # Create ServerApp
 app = ServerApp()
 
 
-def save_result(dataset, iid, model, preprocess, lr, eval_result):
-    iid = "iid" if iid else "niid"
-
+def save_result(dataset, n_clients, partition, model, preprocess, lr, eval_result):
     PROJECT_ROOT = Path(__file__).parent.parent
     result_file = (
-        PROJECT_ROOT / f"result/{dataset}-{iid}-{model}-{preprocess}-{lr}.jsonl"
+        PROJECT_ROOT
+        / f"result/{dataset}-{n_clients}-{partition}-{model}-{preprocess}-{lr}.jsonl"
     )
     result_file.parent.mkdir(exist_ok=True)
 
@@ -55,7 +54,8 @@ def main(grid: Grid, context: Context) -> None:
 
     save_result(
         dataset=context.run_config["dataset"],
-        iid=context.run_config["iid"],
+        n_clients=len(grid.get_node_ids()),
+        partition=context.run_config["partition"],
         model=context.run_config["model"],
         preprocess=context.run_config["preprocess"],
         lr=context.run_config["lr"],

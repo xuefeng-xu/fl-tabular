@@ -4,7 +4,11 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from datasets import Dataset
-from flwr_datasets.partitioner import IidPartitioner, DirichletPartitioner
+from flwr_datasets.partitioner import (
+    IidPartitioner,
+    DirichletPartitioner,
+    ContinuousPartitioner,
+)
 from sklearn.preprocessing import OrdinalEncoder, StandardScaler
 from torch.utils.data import DataLoader, TensorDataset
 
@@ -14,19 +18,35 @@ fds = None  # Cache FederatedDataset
 
 
 def load_feddata(
-    dataset: str, preprocess: str, iid: bool, partition_id: int, num_partitions: int
+    dataset: str,
+    preprocess: str,
+    partition: str,
+    partition_id: int,
+    num_partitions: int,
 ):
     if preprocess not in ["no", "local", "federated"]:
         raise ValueError(f"Unknown preprocess: {preprocess}")
 
     global fds
     if fds is None:
-        if iid:
+        if partition == "iid":
             train_partitioner = IidPartitioner(num_partitions=num_partitions)
-        else:
+        elif partition == "labelskew":
             alpha = 0.5
             train_partitioner = DirichletPartitioner(
                 num_partitions=num_partitions, partition_by="label", alpha=alpha
+            )
+        elif partition == "featureskew":
+            strictness = 1.0
+            feature_map = {
+                "adult": "capital-gain",
+                "bank": "duration",
+                "cover": "Elevation",
+            }
+            train_partitioner = ContinuousPartitioner(
+                num_partitions=num_partitions,
+                partition_by=feature_map[dataset],
+                strictness=strictness,
             )
 
         test_partitioner = IidPartitioner(num_partitions=num_partitions)

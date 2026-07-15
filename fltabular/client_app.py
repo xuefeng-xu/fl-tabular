@@ -3,7 +3,7 @@
 from flwr.app import ArrayRecord, Context, Message, MetricRecord, RecordDict
 from flwr.clientapp import ClientApp
 
-from fltabular.task import load_feddata, get_model, get_device, trainer, evaluator
+from fltabular.task import load_feddata, get_model, trainer, evaluator
 
 # Flower ClientApp
 app = ClientApp()
@@ -18,7 +18,7 @@ def train(msg: Message, context: Context):
     train_loader, _ = load_feddata(
         dataset=dataset,
         preprocess=context.run_config["preprocess"],
-        iid=context.run_config["iid"],
+        partition=context.run_config["partition"],
         partition_id=partition_id,
         num_partitions=context.node_config["num-partitions"],
     )
@@ -49,7 +49,7 @@ def evaluate(msg: Message, context: Context):
     _, test_loader = load_feddata(
         dataset=dataset,
         preprocess=context.run_config["preprocess"],
-        iid=context.run_config["iid"],
+        partition=context.run_config["partition"],
         partition_id=partition_id,
         num_partitions=context.node_config["num-partitions"],
     )

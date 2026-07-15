@@ -10,7 +10,7 @@ license = "Apache-2.0"
 requires-python = ">=3.12"
 dependencies = [
     "flwr[simulation]==1.23.0",
-    "flwr-datasets==0.5.0",
+    "flwr-datasets==0.6.0",
     "datasets==3.1.0",
     "torch==2.8.0",
     "numpy==2.3.4",
@@ -32,7 +32,7 @@ clientapp = "fltabular.client_app:app"
 [tool.flwr.app.config]
 dataset = "adult"
 preprocess = "federated"
-iid = true
+partition = "iid"
 model = "mlp"
 lr = 0.001
 num-server-rounds = 100

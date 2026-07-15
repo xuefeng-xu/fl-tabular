@@ -7,46 +7,113 @@ from argparse import ArgumentParser
 
 LearningRates = {
     "adult": {
-        "iid": {
-            "lr": {"no": 0.001, "local": 0.01, "federated": 0.01},
-            "mlp": {"no": 0.01, "local": 0.001, "federated": 0.001},
+        10: {
+            "iid": {
+                "lr": {"no": 0.001, "local": 0.01, "federated": 0.01},
+                "mlp": {"no": 0.001, "local": 0.001, "federated": 0.001},
+            },
+            "labelskew": {
+                "lr": {"no": 0.0001, "local": 0.01, "federated": 0.01},
+                "mlp": {"no": 0.001, "local": 0.0001, "federated": 0.001},
+            },
+            "featureskew": {
+                "lr": {"no": 0.001, "local": 0.001, "federated": 0.01},
+                "mlp": {"no": 0.001, "local": 0.001, "federated": 0.001},
+            },
         },
-        "niid": {
-            "lr": {"no": 0.001, "local": 0.1, "federated": 0.1},
-            "mlp": {"no": 0.001, "local": 0.001, "federated": 0.01},
+        30: {
+            "iid": {
+                "lr": {"no": 0.001, "local": 0.01, "federated": 0.01},
+                "mlp": {"no": 0.01, "local": 0.001, "federated": 0.001},
+            },
+            "labelskew": {
+                "lr": {"no": 0.001, "local": 0.1, "federated": 0.1},
+                "mlp": {"no": 0.001, "local": 0.001, "federated": 0.01},
+            },
+            "featureskew": {
+                "lr": {"no": 0.01, "local": 0.001, "federated": 0.01},
+                "mlp": {"no": 0.001, "local": 0.001, "federated": 0.001},
+            },
         },
     },
     "bank": {
-        "iid": {
-            "lr": {"no": 0.001, "local": 0.01, "federated": 0.01},
-            "mlp": {"no": 0.001, "local": 0.001, "federated": 0.001},
+        10: {
+            "iid": {
+                "lr": {"no": 0.001, "local": 0.01, "federated": 0.01},
+                "mlp": {"no": 0.001, "local": 0.001, "federated": 0.001},
+            },
+            "labelskew": {
+                "lr": {"no": 0.0001, "local": 0.01, "federated": 0.001},
+                "mlp": {"no": 0.001, "local": 0.0001, "federated": 0.0001},
+            },
+            "featureskew": {
+                "lr": {"no": 0.001, "local": 0.001, "federated": 0.001},
+                "mlp": {"no": 0.01, "local": 0.0001, "federated": 0.001},
+            },
         },
-        "niid": {
-            "lr": {"no": 0.001, "local": 0.01, "federated": 0.01},
-            "mlp": {"no": 0.001, "local": 0.001, "federated": 0.001},
+        30: {
+            "iid": {
+                "lr": {"no": 0.001, "local": 0.01, "federated": 0.01},
+                "mlp": {"no": 0.001, "local": 0.001, "federated": 0.001},
+            },
+            "labelskew": {
+                "lr": {"no": 0.001, "local": 0.01, "federated": 0.01},
+                "mlp": {"no": 0.001, "local": 0.001, "federated": 0.001},
+            },
+            "featureskew": {
+                "lr": {"no": 0.001, "local": 0.001, "federated": 0.001},
+                "mlp": {"no": 0.01, "local": 0.001, "federated": 0.001},
+            },
         },
     },
     "cover": {
-        "iid": {
-            "lr": {"no": 0.001, "local": 0.001, "federated": 0.01},
-            "mlp": {"no": 0.0001, "local": 0.001, "federated": 0.001},
+        10: {
+            "iid": {
+                "lr": {"no": 0.0001, "local": 0.001, "federated": 0.01},
+                "mlp": {"no": 0.0001, "local": 0.001, "federated": 0.001},
+            },
+            "labelskew": {
+                "lr": {"no": 0.0001, "local": 0.0001, "federated": 0.001},
+                "mlp": {"no": 0.0001, "local": 0.001, "federated": 0.001},
+            },
+            "featureskew": {
+                "lr": {"no": 0.0001, "local": 0.0001, "federated": 0.0001},
+                "mlp": {"no": 0.00001, "local": 0.00001, "federated": 0.0001},
+            },
         },
-        "niid": {
-            "lr": {"no": 0.0001, "local": 0.001, "federated": 0.01},
-            "mlp": {"no": 0.0001, "local": 0.001, "federated": 0.001},
+        30: {
+            "iid": {
+                "lr": {"no": 0.001, "local": 0.001, "federated": 0.01},
+                "mlp": {"no": 0.0001, "local": 0.001, "federated": 0.001},
+            },
+            "labelskew": {
+                "lr": {"no": 0.0001, "local": 0.001, "federated": 0.01},
+                "mlp": {"no": 0.0001, "local": 0.001, "federated": 0.001},
+            },
+            "featureskew": {
+                "lr": {"no": 0.0001, "local": 0.0001, "federated": 0.0001},
+                "mlp": {"no": 0.0001, "local": 0.0001, "federated": 0.0001},
+            },
         },
     },
 }
 
 
-def run_experiment(dataset, iid, model, preprocess, lr):
-    cmd = ["flwr", "run", ".", "--run-config"]
+def run_experiment(dataset, n_clients, partition, model, preprocess, lr):
+    cmd = [
+        "flwr",
+        "run",
+        ".",
+        "--federation-config",
+        f"options.num-supernodes={n_clients} ",
+    ]
     cmd += [
+        "--run-config",
         f'dataset="{dataset}" '
-        f"iid={iid} "
+        f'partition="{partition}" '
         f'model="{model}" '
         f'preprocess="{preprocess}" '
-        f"lr={lr}"
+        f"lr={lr}",
     ]
     subprocess.run(cmd, check=True)
 
@@ -61,11 +128,17 @@ if __name__ == "__main__":
         help="Dataset name",
     )
     parser.add_argument(
-        "--iid",
+        "--n_clients",
+        type=int,
+        default=30,
+        help="Number of clients",
+    )
+    parser.add_argument(
+        "--partition",
         type=str,
-        default="true",
-        choices=["true", "false"],
-        help="IID distribution",
+        default="iid",
+        choices=["iid", "labelskew", "featureskew"],
+        help="Data partitioning strategy",
     )
     parser.add_argument(
         "--model",
@@ -75,18 +148,20 @@ if __name__ == "__main__":
         help="Model name",
     )
     args = parser.parse_args()
-    iid = "iid" if args.iid == "true" else "niid"
 
     PROJECT_ROOT = Path(__file__).parent
     fig, ax = plt.subplots(figsize=(3, 3))
 
-    for ls, preprocess in zip(["-", "--", ":"], ["federated", "local", "no"]):
-        lr = LearningRates[args.dataset][iid][args.model][preprocess]
+    for ls, preprocess in zip(["-", ":", "--"], ["federated", "local", "no"]):
+        lr = LearningRates[args.dataset][args.n_clients][args.partition][args.model][
+            preprocess
+        ]
 
         for _ in range(5):
             run_experiment(
                 dataset=args.dataset,
-                iid=args.iid,
+                n_clients=args.n_clients,
+                partition=args.partition,
                 model=args.model,
                 preprocess=preprocess,
                 lr=lr,
@@ -94,7 +169,7 @@ if __name__ == "__main__":
 
         result_file = (
             PROJECT_ROOT
-            / f"result/{args.dataset}-{iid}-{args.model}-{preprocess}-{lr}.jsonl"
+            / f"result/{args.dataset}-{args.n_clients}-{args.partition}-{args.model}-{preprocess}-{lr}.jsonl"
         )
 
         eval_result = read_json(result_file, lines=True)
@@ -108,7 +183,7 @@ if __name__ == "__main__":
         acc_std = np.std(accuracy, axis=0)
 
         print(
-            f"preprocess: {preprocess :<10} accuracy: {acc_mean[-1] :.2f} ± {acc_std[-1] :.2f}"
+            f"preprocess: {preprocess :<10} accuracy: {acc_mean[-1] :.2f} ± {acc_std[-1] :.4f}"
         )
 
         ax.plot(acc_mean, ls, label=f"{preprocess.title()}")
@@ -122,20 +197,29 @@ if __name__ == "__main__":
     if args.dataset == "adult":
         ax.set_ylim(0.6, 0.9)
     elif args.dataset == "bank":
-        ax.set_ylim(0.8, 0.9)
+        ax.set_ylim(0.82, 0.92)
     elif args.dataset == "cover":
-        ax.set_ylim(0.4, 0.9)
+        ax.set_ylim(0.4, 0.92)
 
     ax.set_xlabel("Communication Rounds")
-    ax.set_ylabel("Accuracy")
-    if args.iid == "true":
-        ax.set_title(f"{args.dataset.title()}: IID ({args.model.upper()})")
-    else:
-        ax.set_title(f"{args.dataset.title()}: Non-IID ({args.model.upper()})")
+    ax.set_ylabel("Test Accuracy")
+
+    partition_map = {
+        "iid": "IID",
+        "labelskew": "Label Skew",
+        "featureskew": "Feature Skew",
+    }
+
+    ax.set_title(
+        f"{args.dataset.title()}: {partition_map[args.partition]} ({args.model.upper()})"
+    )
     ax.legend()
 
     fig.tight_layout()
-    img_file = PROJECT_ROOT / f"img/{args.dataset}-{iid}-{args.model}.pdf"
+    img_file = (
+        PROJECT_ROOT
+        / f"img/{args.dataset}-{args.n_clients}-{args.partition}-{args.model}.pdf"
+    )
     img_file.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(img_file)
 

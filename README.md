@@ -23,35 +23,55 @@ pip install -e .
 
 ## Run Simulation
 
+To run a simulation with 30 clients, `adult` dataset, IID partitioning, `mlp` model, federated preprocessing, and learning rate of 0.001:
+
 ```bash
-flwr run . --run-config 'dataset="adult" iid=true model="mlp" preprocess="federated" lr=0.001'
+flwr run . --federation-config 'options.num-supernodes=30' --run-config 'dataset="adult" partition="iid" model="mlp" preprocess="federated" lr=0.001'
 ```
 
-Results are saved in `./result/{dataset}-{iid}-{model}-{preprocess}-{lr}.jsonl`
+Results are saved in `./result/{dataset}-{num-supernodes}-{partition}-{model}-{preprocess}-{lr}.jsonl`
 
 | Parameter | Description | Values |
 |---|---|---|
+| `num-supernodes` | Number of clients | Integer (e.g., `30`) |
 | `dataset` | Dataset name | [`"adult"`](https://archive.ics.uci.edu/dataset/2/adult), [`"bank"`](https://archive.ics.uci.edu/dataset/222/bank+marketing), [`"cover"`](https://archive.ics.uci.edu/dataset/31/covertype) |
-| `iid` | IID distribution | `true` or `false` |
+| `partition` | Data partitioning strategy | `"iid"`, `"labelskew"`, `"featureskew"` |
 | `model` | Model name | `"lr"` or `"mlp"` |
-| `preprocess` | Preprocessing method | `"no"`, `"local"` or `"federated"` |
+| `preprocess` | Preprocessing method | `"no"`, `"local"`, `"federated"` |
 | `lr` | Learning rate | Float (e.g., `0.001`) |
 
 ## Reproduction
 
-To reproduce results for the `adult` dataset + IID setting + `lr` model:
+### Main results
+
+To reproduce results for the `adult` dataset + 30 clients + IID partitioning + `lr` model:
 
 ```bash
-python reproduce.py --dataset adult --iid true --model lr
+python reproduce.py --dataset adult --n_clients 30 --partition iid --model lr
 ```
 
-Similarly, to reproduce results for the `bank` dataset + Non-IID setting + `mlp` model:
+Similarly, to reproduce results for the `bank` dataset + 10 clients + label skew partitioning + `mlp` model:
 
 ```bash
-python reproduce.py --dataset bank --iid false --model mlp
+python reproduce.py --dataset bank --n_clients 10 --partition labelskew --model mlp
 ```
 
-Plots are saved in `./img/{dataset}-{iid}-{model}.pdf`
+| Parameter | Description | Values |
+|---|---|---|
+| `dataset` | Dataset name | [`adult`](https://archive.ics.uci.edu/dataset/2/adult), [`bank`](https://archive.ics.uci.edu/dataset/222/bank+marketing), [`cover`](https://archive.ics.uci.edu/dataset/31/covertype) |
+| `n_clients` | Number of clients | Integer (e.g., `30`) |
+| `partition` | Data partitioning strategy | `iid`, `labelskew`, `featureskew` |
+| `model` | Model name | `lr` or `mlp` |
+
+Plots are saved in `./img/{dataset}-{n_clients}-{partition}-{model}.pdf`
+
+### Demo (Figure 1)
+
+```bash
+python demo.py
+```
+
+Plots are saved in `./img/demo/*.pdf`
 
 ## Acknowledgements
 

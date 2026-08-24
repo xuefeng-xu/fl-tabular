@@ -1,5 +1,8 @@
 # Federated Learning with Tabular dataset
 
+This repository contains experiments on the impact of different preprocessing strategies in federated learning.
+The implementation of federated data preprocessing methods is available at https://github.com/xuefeng-xu/fedps.
+
 ## Installation
 
 1. Create a Python environment:
@@ -23,7 +26,7 @@ pip install -e .
 
 ## Run Simulation
 
-To run a simulation with 30 clients, `adult` dataset, IID partitioning, `mlp` model, federated preprocessing, and learning rate of 0.001:
+To run a simulation with 30 clients + `"adult"` dataset + IID partitioning + `"mlp"` model + `"federated"` preprocessing + learning rate of 0.001:
 
 ```bash
 flwr run . --federation-config 'options.num-supernodes=30' --run-config 'dataset="adult" partition="iid" model="mlp" preprocess="federated" lr=0.001'
@@ -56,6 +59,8 @@ Similarly, to reproduce results for the `bank` dataset + 10 clients + label skew
 python reproduce.py --dataset bank --n_clients 10 --partition labelskew --model mlp
 ```
 
+Plots are saved in `./img/{dataset}-{n_clients}-{partition}-{model}.pdf`
+
 | Parameter | Description | Values |
 |---|---|---|
 | `dataset` | Dataset name | [`adult`](https://archive.ics.uci.edu/dataset/2/adult), [`bank`](https://archive.ics.uci.edu/dataset/222/bank+marketing), [`cover`](https://archive.ics.uci.edu/dataset/31/covertype) |
@@ -63,7 +68,7 @@ python reproduce.py --dataset bank --n_clients 10 --partition labelskew --model 
 | `partition` | Data partitioning strategy | `iid`, `labelskew`, `featureskew` |
 | `model` | Model name | `lr` or `mlp` |
 
-Plots are saved in `./img/{dataset}-{n_clients}-{partition}-{model}.pdf`
+---
 
 ### Demo (Figure 1)
 
@@ -75,4 +80,8 @@ Plots are saved in `./img/demo/*.pdf`
 
 ## Acknowledgements
 
-This code is adapted from [Flower with a Tabular Dataset Example](https://github.com/adap/flower/tree/v1.23.0/examples/fl-tabular)
+This code is adapted from [Flower Example on Adult Census Income Tabular Dataset](https://github.com/adap/flower/tree/v1.23.0/examples/fl-tabular)
+
+## License
+
+[Apache License 2.0](LICENSE)
